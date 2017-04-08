@@ -1,5 +1,8 @@
 # 环境说明
 
+例子代码来源于[todomvc](https://github.com/tastejs/todomvc)里[jquery](https://github.com/tastejs/todomvc/tree/master/examples/jquery).
+
+# 使用步骤
 安装gulp-cli 
 ```
 npm install gulpjs/gulp-cli -g 
