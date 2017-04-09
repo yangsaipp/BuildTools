@@ -1,0 +1,62 @@
+buildscript {
+	repositories {
+		maven{url "http://maven.aliyun.com/nexus/content/groups/public"}
+	}
+}
+
+plugins {
+	id "com.moowork.node" version "1.1.1"
+}
+
+apply plugin: 'java'
+
+node {
+  // Version of node to use.
+  // version = '0.11.10'
+
+  // Version of npm to use.
+  // npmVersion = '2.1.5'
+
+  // Version of Yarn to use.
+  // yarnVersion = '0.16.1'
+
+  // Base URL for fetching node distributions (change if you have a mirror).
+  // distBaseUrl = 'https://nodejs.org/dist'
+
+  // If true, it will download node using above parameters.
+  // If false, it will try to use globally installed node.
+  download = false
+
+  // Set the work directory for unpacking node
+  workDir = file("${project.buildDir}/nodejs")
+
+  // Set the work directory for NPM
+  // npmWorkDir = file("${project.projectDir}/src/main/ui/")
+
+  // Set the work directory for Yarn
+  // yarnWorkDir = file("${project.buildDir}/yarn")
+
+  // Set the work directory where node_modules should be located
+  // nodeModulesDir = file("${project.projectDir}")
+}
+
+repositories {
+//    jcenter()
+	mavenLocal()
+	maven{url "http://maven.aliyun.com/nexus/content/groups/public"}
+}
+
+// 执行npm run dev任务，也就是gulp dev任务
+task gulpDev(type: NpmTask) {
+  // install the express package only
+  args = ['run', 'dev']
+}
+
+// 执行npm run build任务，也就是gulp build任务
+task gulpBuild(type: NpmTask) {
+  // install the express package only
+  args = ['run', 'build']
+}
+
+// 在jar插件任务processResources之前执行gulpBuild任务
+processResources.dependsOn(gulpBuild)

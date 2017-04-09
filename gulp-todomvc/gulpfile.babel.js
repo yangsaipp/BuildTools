@@ -15,11 +15,49 @@ import browserSync from 'browser-sync';
 import rimraf   from 'rimraf';
 
 const $ = gulpLoadPlugins();
-// const reload = browserSync.reload;
 // 输出目录
 const dist = 'dist';
 const PRODUCTION = false;
 
+const lib = {
+	"todomvc-app-css": [
+		'node_modules/todomvc-app-css/index.css'
+	],
+	"todomvc-common": [
+		'node_modules/todomvc-common/base.js',
+		'node_modules/todomvc-common/base.css'
+	],
+	jquery: [
+		'node_modules/jquery/dist/jquery.js'
+	],
+	handlebars: [
+		'node_modules/handlebars/dist/handlebars.js'
+	],
+	director: [
+		'node_modules/director/build/director.js'
+	],
+	js: function() {
+		var libJs = [];
+		for(var i in lib) {
+			// console.log(i);
+			for(var j in lib[i]) {
+				if(lib[i][j].endsWith('.js'))
+					libJs.push(lib[i][j]);
+			}
+		}
+		return libJs;
+	},
+	css: function() {
+		var libCss = [];
+		for(var i in lib) {
+			for(var j in lib[i]) {
+				if(lib[i][j].endsWith('.css'))
+					libCss.push(lib[i][j]);
+			}
+		}
+		return libCss;
+	}
+}
 gulp.task('css',
     gulp.series(css, libcss));
 
@@ -35,7 +73,7 @@ gulp.task('default',
 
 gulp.task('dev',
     gulp.series('build', server, watch));
-
+	
 // Reload the browser with BrowserSync
 function reload(done) {
   browserSync.reload();
@@ -54,19 +92,6 @@ function clean(done) {
   rimraf(dist, done);
 }
 
-var lib = {
-	js: [
-		'node_modules/todomvc-common/base.js',
-		'node_modules/jquery/dist/jquery.js',
-		'node_modules/handlebars/dist/handlebars.js',
-		'node_modules/director/build/director.js'
-	],
-	css:[
-		'node_modules/todomvc-app-css/index.css',
-		'node_modules/todomvc-common/base.css'
-	]
-}
-
 // 合并css
 function css() {
   return gulp.src("css/**/*.css")
@@ -75,7 +100,7 @@ function css() {
 }
 
 function libcss() {
-  return gulp.src(lib.css)
+  return gulp.src(lib.css())
 		.pipe($.concat('lib.css'))
 		.pipe(gulp.dest(dist));
 }
@@ -94,7 +119,7 @@ function javascript() {
 // 若PRODUCTION为true就混淆js
 
 function libjs() {
-	return gulp.src(lib.js)
+	return gulp.src(lib.js())
 		.pipe($.sourcemaps.init())
 		.pipe($.concat('lib.js'))
 		.pipe($.if(PRODUCTION, $.uglify().on('error', e => { console.log(e); })))
